@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<title id="title">企业宣传</title>
+		<link rel="stylesheet" href="static/style/style.css">
+        <script src="static/lib/zepto.js"></script>
+        <script src="static/lib/vue.js"></script>
+	</head>
+	<body>
+        <!--<img src="static/img/logo.png">-->
+        <div id="container">
+            <ul>
+                <h3>name:</h3>
+                <li class="list-1" v-for="list in lists">
+                    <span>{{list.name}}</span>
+                    <button @click="clearThisName">X</button>
+                </li>
+                <h3>person:</h3>
+                <li class="list-2" v-for="info in person">{{info}}</li>
+            </ul>
+            <input type="text" v-model="name" @input="watch_input" placeholder="输入名字"/>
+            <button @click="add_name">add name</button>
+            <div>
+                <template v-if="input_not_null">
+                    <span>您的输入：{{name}}</span>
+                    <span>很方面的数据绑定</span>
+                </template>
+                <span v-else>{{name ? '':'输入你的名字'}}</span>
+                <div data-age="{{person.age}}">{{{hr_html}}}</div>
+                <div v-bind:class="[style.color_red]" v-bind:style="cssObj">computed_age:{{age}},data_person_age:{{person.age}}</div>
+                <div v-bind:class="{'color_red':input_not_null}" v-bind:style="{fontSize:fontSize + 'px'}">{{watch_name}}</div>
+            </div>
+        </div>
+        <a href="./component.html">component</a>
+        <a href="./component_communicate.html">component_communicate</a>
+        <a href="./components/normal_effect/pic_center.html">pic_center from components</a><br>
+        <a href="./components/normal_effect/pic_center.html">pic_center from components</a>
+        <div id="child">
+            <h4>child</h4>
+            <parent></parent>
+        </div>
+
+        <script>
+            var vm1 = new Vue({
+                el:'#container',
+                data:{
+                    lists:[{name:'mayned'},{name:'june'}],
+                    person:{name:'mayned',age:'33',sex:'male'},
+                    hr_html:'<button style="margin-top: 20px">gg</button>',
+                    name:'',
+                    input_not_null:false,
+                    watch_name:'',
+                    style:{'color_red':'color_red','font-size':'32px'},
+                    fontSize:32,
+                    cssObj:{color:'orange',fontSize:'24px'}
+                },
+                methods:{
+                    add_name:function(){
+                        this.lists.push({name:this.name});
+                        this.name='';
+                        this.input_not_null = false;
+                    },
+                    watch_input:function() {
+                        if(this.name){
+                            this.input_not_null = true;
+                        }else{
+                            this.input_not_null = false;
+                        }
+                    },
+                    clearThisName:function() {
+
+                    }
+                },
+                computed:{
+                    age:{
+                        get:function() {
+                            return Number(this.person.age) + 5;
+                        },
+                        set:function() {
+                            this.hr_html = '58'
+                        }
+                    }
+                }
+            });
+            vm1.$watch('name',function(val) {
+                this.watch_name = "i'm watching name:" + val;
+            });
+            /**
+             * 组件
+             * */
+            var Child = Vue.extend({
+                template:'<p>child</p>'
+            });
+            var Parent = Vue.extend({
+                components: {
+                    'child': Child
+                }
+            });
+            Vue.component('parent',Parent);
+            new Vue({
+                el: "#child"
+            });
+        </script>
+	</body>
+</html>
